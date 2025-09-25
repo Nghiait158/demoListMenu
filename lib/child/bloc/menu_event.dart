@@ -1,4 +1,6 @@
 import 'package:equatable/equatable.dart';
+
+import '../../model/menu.dart';
 // import '../model/Menu.dart';
 
 abstract class MenuEvent extends Equatable {
@@ -32,4 +34,21 @@ class AddChildItemEvent extends MenuEvent {
 
 class LoadMenuEvent extends MenuEvent {
   const LoadMenuEvent();
+}
+
+enum DropPosition { before, after }
+
+final class ReorderMenuItemsEvent extends MenuEvent {
+  final MenuItem draggedItem;
+  final MenuItem targetItem;
+  final DropPosition position;
+
+  const ReorderMenuItemsEvent({
+    required this.draggedItem,
+    required this.targetItem,
+    required this.position,
+  });
+
+  @override
+  List<Object> get props => [draggedItem, targetItem, position];
 }

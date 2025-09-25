@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../model/Menu.dart';
+import '../../model/menu.dart';
 // import '../model/Menu.dart';
 
 abstract class MenuState extends Equatable {

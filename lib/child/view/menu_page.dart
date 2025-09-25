@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/menu_bloc.dart';
 import '../bloc/menu_event.dart';
 import '../bloc/menu_state.dart';
-import '../../model/Menu.dart';
-import 'BoardMenu.dart';
+import '../../model/menu.dart';
+import 'board_menu.dart';
 
 class MenuPage_child extends StatelessWidget {
   const MenuPage_child({super.key});
@@ -37,7 +37,7 @@ class _MenuViewState extends State<MenuView> {
   Widget buildInformationPanel() {
     if (selectedMenuItem == null) {
       return Container(
-        color: Colors.grey[100],
+        color: Colors.white,
         child: const Center(
           child: Text(
             'Select a menu item to view details',
@@ -47,8 +47,16 @@ class _MenuViewState extends State<MenuView> {
       );
     }
 
+    if (selectedMenuItem!.information != null) {
+      return Container(
+        color: Colors.white,
+        padding: const EdgeInsets.all(20),
+        child: selectedMenuItem!.information!,
+      );
+    }
+
     return Container(
-      color: Colors.grey[100],
+      color: Colors.white,
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -91,7 +99,6 @@ class _MenuViewState extends State<MenuView> {
 
     return Padding(
         padding: EdgeInsets.only(left: 10, right:800),
-
       child: TextField(
         controller: controller,
         onSubmitted: (_) => submitChild(),
@@ -124,6 +131,7 @@ class _MenuViewState extends State<MenuView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Menu Demo using child'),
         backgroundColor: Colors.blue,
@@ -136,7 +144,7 @@ class _MenuViewState extends State<MenuView> {
             return Row(
               children: [
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: buildInformationPanel(),
                 ),
                 Expanded(
