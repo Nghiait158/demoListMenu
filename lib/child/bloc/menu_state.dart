@@ -19,7 +19,7 @@ class MenuLoading extends MenuState {
 }
 
 class MenuLoaded extends MenuState {
-  final List<MenuItem> menuItems;
+  final List<menuEntry> menuItems;
   final String? newlyAddedParentId;
 
   const MenuLoaded(this.menuItems, {this.newlyAddedParentId});

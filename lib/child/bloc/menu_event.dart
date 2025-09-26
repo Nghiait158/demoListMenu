@@ -39,8 +39,8 @@ class LoadMenuEvent extends MenuEvent {
 enum DropPosition { before, after }
 
 final class ReorderMenuItemsEvent extends MenuEvent {
-  final MenuItem draggedItem;
-  final MenuItem targetItem;
+  final menuEntry draggedItem;
+  final menuEntry targetItem;
   final DropPosition position;
 
   const ReorderMenuItemsEvent({

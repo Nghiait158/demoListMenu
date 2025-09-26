@@ -5,128 +5,62 @@ import '../bloc/menu_event.dart';
 import '../bloc/menu_state.dart';
 import '../../model/menu.dart';
 import 'board_menu.dart';
+import 'custom_menu_item/custom_menu_item_level0.dart';
+import 'custom_menu_item/custom_menu_item_level1.dart';
+import 'custom_menu_item/custom_menu_item_level2.dart';
+import 'drag_drop/drag_menu_item.dart';
+import 'menu_item_widget.dart';
+import 'information_panel.dart';
 
 class MenuPage_child extends StatelessWidget {
-  const MenuPage_child({super.key});
+  final Widget? informationPanel;
+  final Widget? menuBuilder;
+  const MenuPage_child({
+    this.menuBuilder,
+    super.key,
+    this.informationPanel,
+  });
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => MenuBloc()..add(const LoadMenuEvent()),
-      child: const MenuView(),
+      child: MenuView(menuBuilder: menuBuilder, informationPanel: informationPanel),
     );
   }
 }
 
 class MenuView extends StatefulWidget {
-  const MenuView({super.key});
+  final Widget? menuBuilder;
+  final Widget? informationPanel;
+  const MenuView({
+    this.menuBuilder,
+    this.informationPanel,
+    super.key
+  });
 
   @override
   State<MenuView> createState() => _MenuViewState();
 }
 
 class _MenuViewState extends State<MenuView> {
-  MenuItem? selectedMenuItem;
+  menuEntry? selectedMenuItem;
 
-  void onMenuItemTap(MenuItem item) {
+  void onMenuItemTap(menuEntry item) {
     setState(() {
       selectedMenuItem = item;
     });
   }
 
-  Widget buildInformationPanel() {
-    if (selectedMenuItem == null) {
-      return Container(
-        color: Colors.white,
-        child: const Center(
-          child: Text(
-            'Select a menu item to view details',
-            style: TextStyle(fontSize: 18, color: Colors.grey),
-          ),
-        ),
-      );
-    }
 
-    if (selectedMenuItem!.information != null) {
-      return Container(
-        color: Colors.white,
-        padding: const EdgeInsets.all(20),
-        child: selectedMenuItem!.information!,
-      );
-    }
-
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Menu Information',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue[700],
-            ),
-          ),
-          const SizedBox(height: 20),
-          Text('Id: '+selectedMenuItem!.id),
-          const SizedBox(height: 12),
-          Text('Name: '+ selectedMenuItem!.name),
-          const SizedBox(height: 12),
-          Text('Description: '+ selectedMenuItem!.desc),
-          const SizedBox(height: 20),
-          _addNewChildItemWidget(),
-        ],
-      ),
-    );
+  void _handleAddChild(String parentId, String childName) {
+    context.read<MenuBloc>().add(AddChildItemEvent(
+      parentId: parentId,
+      childName: childName,
+    ));
   }
 
-  Widget _addNewChildItemWidget() {
-    final TextEditingController controller = TextEditingController();
 
-    void submitChild() {
-      final value = controller.text.trim();
-      if (value.isNotEmpty && selectedMenuItem != null) {
-        context.read<MenuBloc>().add(AddChildItemEvent(
-              parentId: selectedMenuItem!.id,
-              childName: value,
-            ));
-        controller.clear();
-        FocusScope.of(context).unfocus();
-      }
-    }
-
-    return Padding(
-        padding: EdgeInsets.only(left: 10, right:800),
-      child: TextField(
-        controller: controller,
-        onSubmitted: (_) => submitChild(),
-        decoration: InputDecoration(
-          fillColor: Colors.blue.withOpacity(0.2),
-          filled: true,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: Colors.black,
-              width: 1,
-            ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: Colors.black,
-              width: 1,
-            ),
-          ),
-          prefixIcon: Icon(Icons.add),
-          hintText: 'Create new child for ' + selectedMenuItem!.name,
-          // contentPadding: const EdgeInsets.symmetric(horizontal: 300, vertical: 15),
-        ),
-      ),
-    );
-
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -141,11 +75,92 @@ class _MenuViewState extends State<MenuView> {
           if (state is MenuLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is MenuLoaded) {
+            late MenuItemBuilder menu;
+
+            String? findParentId(String childId, List<menuEntry> entries) {
+              for (final entry in entries) {
+                if (entry.child.any((child) => child.id == childId)) {
+                  return entry.id;
+                }
+                final foundId = findParentId(childId, entry.child);
+                if (foundId != null) {
+                  return foundId;
+                }
+              }
+              return null;
+            }
+
+            menu = widget.menuBuilder == null ? (context, menuItem, level) {
+              Widget menuWidget;
+              switch (level) {
+                case 0:
+                  menuWidget = CustomMenuItemLevel0(
+                    item: menuItem,
+                    selectedMenuItem: selectedMenuItem,
+                    textColor: Colors.black,
+                  );
+                  break;
+                case 1:
+                  menuWidget = CustomMenuItemLevel1(
+                    item: menuItem,
+                    selectedMenuItem: selectedMenuItem,
+                    textColor: Colors.black,
+                  );
+                  break;
+                case 2:
+                  menuWidget = CustomMenuItemLevel2(
+                    item: menuItem,
+                    selectedMenuItem: selectedMenuItem,
+                    textColor: Colors.black,
+                  );
+                  break;
+                default:
+                  menuWidget = ListTile(
+                    title: Text(menuItem.name),
+                    leading: menuItem.child.isNotEmpty ? const Icon(Icons.folder) : const Icon(Icons.description),
+                  );
+              }
+
+              final parentId = findParentId(menuItem.id, state.menuItems);
+
+              return DragMenuItem(
+                item: menuItem,
+                level: level,
+                parentId: parentId,
+                child: MenuItemWidget(
+                  item: menuItem,
+                  level: level,
+                  onItemTap: onMenuItemTap,
+                  selectedMenuItem: selectedMenuItem,
+                  expandedItemId: state.newlyAddedParentId,
+                  menuWidget: menuWidget,
+                  menuBuilder: menu,
+                ),
+              );
+
+              // if doesnt need dragDrop
+              // return MenuItemWidget(
+              //     item: menuItem,
+              //     level: level,
+              //     onItemTap: onMenuItemTap,
+              //     selectedMenuItem: selectedMenuItem,
+              //     expandedItemId: state.newlyAddedParentId,
+              //     menuWidget: menuWidget,
+              //     menuBuilder: menuBuilder,
+              // );
+            } : (context, menuItem, level) {return widget.menuBuilder!;};
+
             return Row(
               children: [
                 Expanded(
                   flex: 3,
-                  child: buildInformationPanel(),
+                  child: widget.informationPanel == null
+                      ?  InformationPanel(
+                            selectedMenuItem: selectedMenuItem,
+                            allMenuItems: state.menuItems,
+                            onAddChild: _handleAddChild,
+                        )
+                      : widget.informationPanel!,
                 ),
                 Expanded(
                   flex: 1,
@@ -154,6 +169,8 @@ class _MenuViewState extends State<MenuView> {
                     onItemTap: onMenuItemTap,
                     selectedMenuItem: selectedMenuItem,
                     expandedItemId: state.newlyAddedParentId,
+                    menuBuilder: menu,
+                    // menuContentbuilder:
                   ),
                 )
               ],

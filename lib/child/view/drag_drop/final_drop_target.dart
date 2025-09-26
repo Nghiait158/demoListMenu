@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:list_menu_demo/child/bloc/menu_bloc.dart';
 import 'package:list_menu_demo/child/bloc/menu_event.dart';
-import 'package:list_menu_demo/child/view/drag_menu_item.dart';
+import 'package:list_menu_demo/child/view/drag_drop/drag_menu_item.dart';
 import 'package:list_menu_demo/model/menu.dart';
 
 class FinalDropTarget extends StatelessWidget {
-  final MenuItem lastItem;
+  final menuEntry lastItem;
   final int level;
   final String? parentId;
 
