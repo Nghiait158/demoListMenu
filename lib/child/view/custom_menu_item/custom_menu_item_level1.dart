@@ -52,6 +52,7 @@ class CustomMenuItemLevel1 extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 1),
               decoration: BoxDecoration(
@@ -65,7 +66,7 @@ class CustomMenuItemLevel1 extends StatelessWidget {
                 Icons.check,
                 color: Colors.green,
               ),
-            )
+            ),
           ],
         ),
         contentPadding:

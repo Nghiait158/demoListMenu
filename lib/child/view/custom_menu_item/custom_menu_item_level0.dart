@@ -65,11 +65,10 @@ class CustomMenuItemLevel0 extends StatelessWidget {
                 Icons.check,
                 color: Colors.green,
               ),
-            )
+            ),
           ],
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
         dense: true,
       ),
     );

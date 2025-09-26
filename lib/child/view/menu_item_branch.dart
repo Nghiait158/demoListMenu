@@ -52,19 +52,14 @@ class _MenuItemBranchState extends State<MenuItemBranch> {
         decoration: BoxDecoration(
           color: Colors.lightBlue.shade50,
           borderRadius: BorderRadius.circular(12),
-          // border: Border.all(
-          //   color: Colors.black,
-          //   width: 1,
-          // ),
         ),
         child: ListTile(
-          // leading: const Icon(Icons.add, color: Colors.blue),
           title: TextField(
             controller: controller,
             decoration: const InputDecoration(
               isDense: true,
               contentPadding: EdgeInsets.symmetric(vertical: 8),
-              hintText: "Add new item123...",
+              hintText: "Add new item...",
               hintStyle: TextStyle(color: Colors.grey),
               border: InputBorder.none,
             ),
@@ -109,7 +104,8 @@ class _MenuItemBranchState extends State<MenuItemBranch> {
               print('Tapped on: ${widget.item.name}');
             },
             child: widget.menuWidget,
-            // child: widget.menuWidget,
+
+
           ),
 
           if (_isExpanded) ...[
@@ -117,11 +113,11 @@ class _MenuItemBranchState extends State<MenuItemBranch> {
                   (childItem) => Padding(
                 padding: const EdgeInsets.only(left: 20, top: 2),
                 child: widget.menuBuilder(context, childItem, widget.level + 1),
+
               ),
             ).toList(),
-
             // if hav child
-            if (widget.item.child.isNotEmpty)
+            if (widget.item.child.isNotEmpty)...[
               Padding(
                 padding: const EdgeInsets.only(left: 20, top: 2),
                 child: FinalDropTarget(
@@ -130,7 +126,7 @@ class _MenuItemBranchState extends State<MenuItemBranch> {
                   parentId: widget.item.id,
                 ),
               ),
-
+            ],
             //add new item  at the end
             addNewItemWidget(),
           ],

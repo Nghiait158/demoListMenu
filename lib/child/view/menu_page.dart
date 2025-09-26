@@ -116,6 +116,25 @@ class _MenuViewState extends State<MenuView> {
                   break;
                 default:
                   menuWidget = ListTile(
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 1),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(
+                              color: Colors.green,
+                              width: 2,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.check,
+                            color: Colors.green,
+                          ),
+                        )
+                      ],
+                    ),
                     title: Text(menuItem.name),
                     leading: menuItem.child.isNotEmpty ? const Icon(Icons.folder) : const Icon(Icons.description),
                   );
@@ -148,12 +167,13 @@ class _MenuViewState extends State<MenuView> {
               //     menuWidget: menuWidget,
               //     menuBuilder: menuBuilder,
               // );
+
             } : (context, menuItem, level) {return widget.menuBuilder!;};
 
             return Row(
               children: [
                 Expanded(
-                  flex: 3,
+                  flex: 4,
                   child: widget.informationPanel == null
                       ?  InformationPanel(
                             selectedMenuItem: selectedMenuItem,

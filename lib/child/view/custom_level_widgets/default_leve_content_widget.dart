@@ -144,15 +144,4 @@ class DefaultLevelContentWidget extends StatelessWidget {
       );
   }
 
-  IconData _getLevelIcon(int level) {
-    const icons = [
-      Icons.home,
-      Icons.folder,
-      Icons.description,
-      Icons.apps,
-      Icons.auto_awesome,
-      Icons.psychology,
-    ];
-    return level < icons.length ? icons[level] : Icons.more_horiz;
-  }
 }
